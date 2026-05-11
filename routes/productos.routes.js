@@ -9,5 +9,6 @@ router.get('/:id', validarProductoIdConCategoria, productosController.obtenerPro
 router.post('/', validarProducto, productosController.crearProducto)
 router.put('/:id', validarProductoId, validarProducto, productosController.actualizarProducto)
 router.delete('/:id', validarProductoId, productosController.eliminarProducto)
-
+router.post('/:id/etiquetas', validarProductoId,productosController.asignarEtiquetas)
+router.post('/:id/etiquetas/:etiquetaId', productosController.asociarEtiquetas)
 module.exports = router

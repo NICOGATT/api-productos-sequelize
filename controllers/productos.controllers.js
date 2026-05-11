@@ -1,14 +1,22 @@
-const { Producto, Categoria } = require('../models')
+const { Producto, Categoria, Etiqueta } = require('../models')
+const etiqueta = require('../models/etiqueta')
 
 const obtenerProductos = async (req,res) => {
     try {
         const productos = await Producto.findAll({
             attributes: ["nombre","precio","stock"],
-            include: {
+            include: [
+            {
                 model: Categoria,
                 as: "categoria",
                 attributes: ["nombre"]
+            }, 
+            {
+                model : Etiqueta, 
+                as: "etiqueta", 
+                through : ""
             }
+        ]
         })
         res.status(200).json(productos)
     } catch (error) {
@@ -74,10 +82,42 @@ const eliminarProducto = async (req, res) => {
     }
 }
 
+const asignarEtiquetas = async (req, res) => {
+    try {
+        const producto = req.producto
+        const {etiquetasIds} = req.body 
+        const etiquetas = await Etiqueta.findAll({
+            where : {
+                id : etiquetasIds
+            }
+        })
+        await producto.setEtiquetas(etiquetas)
+        res.status(200).json({message : "Etiquetas asignadas con exitoso"})
+    } catch (error) {
+        res.status(500).json({
+            message : "Error al asignar etiquetas al producto"
+        })
+    }
+}
+
+const asociarEtiquetas = async (req, res) => {
+    try {
+        const producto = req.producto
+        const {etiquetaId} = req.params
+        const etiqueta = await Etiqueta.findPk(etiquetaId)
+        await producto.addEtiqueta(etiqueta)
+        res.status(200).json({message: "Etiqueta asociada con exito"})
+    } catch (error) {
+        res.status(500).json({message: "Error al asignar etiqueta"})
+    }
+}
+
 module.exports = {
     obtenerProductos,
     obtenerProducto,
     crearProducto,
     actualizarProducto,
-    eliminarProducto
+    eliminarProducto, 
+    asignarEtiquetas, 
+    asociarEtiquetas
 }
