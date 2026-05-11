@@ -4,8 +4,8 @@ const db = require('./models')
 const routerProductos = require('./routes/productos.routes')
 const routerCategoria = require('./routes/categorias.routes')
 const routerEtiquetas = require('./routes/etiquetas.routes')
-const PORT = 3000
-
+const PORT = process.env.PORT || 3000
+require('dotenv').config
 app.use(express.json())
 
 app.use('/productos', routerProductos)
